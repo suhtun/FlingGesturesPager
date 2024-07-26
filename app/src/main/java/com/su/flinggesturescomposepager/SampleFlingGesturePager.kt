@@ -55,9 +55,6 @@ fun FlingGesturePager(modifier: Modifier = Modifier) {
         state = pagerState,
         beyondViewportPageCount = 10,
     ) { page ->
-
-        val pageOffset = pagerState.getOffsetDistanceInPages(page).absoluteValue
-
         SongItem()
     }
 }
