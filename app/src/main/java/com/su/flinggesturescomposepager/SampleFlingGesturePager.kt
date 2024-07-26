@@ -51,23 +51,34 @@ fun FlingGesturePager(modifier: Modifier = Modifier) {
 
     val pagerState = rememberPagerState(pageCount = { 10 })
 
+    val fling = PagerDefaults.flingBehavior(
+        state = pagerState,
+        pagerSnapDistance = PagerSnapDistance.atMost(2)
+    )
+
     HorizontalPager(
         state = pagerState,
         beyondViewportPageCount = 10,
+        flingBehavior = fling
     ) { page ->
-        SongItem()
+
+        val pageOffset = pagerState.getOffsetDistanceInPages(page).absoluteValue
+
+        SongItem(pageOffset)
     }
 }
 
 @Preview
 @Composable
 private fun SongItem(
+    pageOffset: Float = 0f,
     songImage: Int = R.drawable.ic_launcher_background,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(32.dp)
+            .height(286.dp * (2 - pageOffset))
             .background(Color.White, RoundedCornerShape(16.dp))
     ) {
         Box(modifier = Modifier.padding(32.dp)) {
@@ -77,7 +88,16 @@ private fun SongItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
                     .fillMaxWidth()
-                    .height(230.dp),
+                    .height(230.dp)
+                    .graphicsLayer {
+                        val scale = lerp(
+                            1f,
+                            1.75f,
+                            pageOffset
+                        )
+                        scaleX *= scale
+                        scaleY *= scale
+                    },
                 contentScale = ContentScale.Crop
             )
         }
